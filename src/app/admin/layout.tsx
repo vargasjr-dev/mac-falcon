@@ -45,6 +45,12 @@ export default async function AdminLayout({
             >
               Procurement
             </Link>
+            <Link
+              href="/admin/supplies"
+              className="hover:text-slate-200 transition-colors tracking-wide"
+            >
+              Supplies
+            </Link>
             <form action={logout}>
               <button
                 type="submit"

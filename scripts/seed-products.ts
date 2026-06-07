@@ -44,7 +44,7 @@ const m4d2Bom: BomItem[] = [
     part: "iRobot Create 3",
     source: "iRobot",
     priceUsd: 39900,
-    url: "https://edu.irobot.com/create3",
+    url: "https://www.amazon.com/dp/B09V9FW2BG",
     notes:
       "The robot base — differential drive, 9 kg payload, autonomous docking, ROS 2 native. The foundation everything else builds on.",
     procure: "per_order",

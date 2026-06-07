@@ -90,6 +90,18 @@ export const order = pgTable(
   (t) => [index("order_user").on(t.userId)]
 );
 
+export const supplyPurchase = pgTable("supply_purchase", {
+  id: text("id").primaryKey(),
+  partName: text("partName").notNull(),        // matches BOM part names loosely
+  supplier: text("supplier"),
+  quantity: integer("quantity").notNull(),
+  totalPaidUsd: integer("totalPaidUsd").notNull(), // in cents — total for the whole batch
+  url: text("url"),
+  notes: text("notes"),
+  purchasedAt: timestamp("purchasedAt").notNull().defaultNow(),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+});
+
 export const orderItem = pgTable("order_item", {
   id: text("id").primaryKey(),
   orderId: text("orderId")

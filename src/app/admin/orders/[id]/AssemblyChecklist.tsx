@@ -7,24 +7,14 @@ interface BomRow {
   source: string;
   url?: string;
   notes?: string;
-  priceUsd: number;
 }
 
 interface Props {
   paidComponents: BomRow[];
   includedItems: BomRow[];
-  totalComponentCost: number;
 }
 
-function formatUsd(cents: number) {
-  return `$${(cents / 100).toFixed(0)}`;
-}
-
-export default function AssemblyChecklist({
-  paidComponents,
-  includedItems,
-  totalComponentCost,
-}: Props) {
+export default function AssemblyChecklist({ paidComponents, includedItems }: Props) {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
 
   function toggle(i: number) {
@@ -36,23 +26,15 @@ export default function AssemblyChecklist({
 
   return (
     <section className="mb-8">
-      <div className="mb-5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-black text-slate-100 tracking-tight">
-            Assembly checklist
-          </h2>
-          {totalCount > 0 && (
-            <span className="text-xs text-slate-500 font-medium">
-              {doneCount}/{totalCount} sourced
-            </span>
-          )}
-        </div>
-        <p className="text-slate-500 text-sm mt-1">
-          Everything needed to build and ship this order. Component cost:{" "}
-          <span className="text-slate-300 font-semibold">
-            {formatUsd(totalComponentCost)}
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-lg font-black text-slate-100 tracking-tight">
+          Assembly checklist
+        </h2>
+        {totalCount > 0 && (
+          <span className="text-xs text-slate-500 font-medium">
+            {doneCount}/{totalCount} sourced
           </span>
-        </p>
+        )}
       </div>
 
       {/* Parts to source */}
@@ -81,18 +63,8 @@ export default function AssemblyChecklist({
                   }`}
                 >
                   {checked[i] && (
-                    <svg
-                      className="w-3 h-3 text-slate-900"
-                      viewBox="0 0 12 12"
-                      fill="none"
-                    >
-                      <path
-                        d="M2 6l3 3 5-5"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
+                    <svg className="w-3 h-3 text-slate-900" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   )}
                 </div>
@@ -100,11 +72,7 @@ export default function AssemblyChecklist({
                 {/* Part details */}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span
-                      className={`font-semibold text-sm transition-colors ${
-                        checked[i] ? "text-slate-500 line-through" : "text-slate-200"
-                      }`}
-                    >
+                    <span className={`font-semibold text-sm transition-colors ${checked[i] ? "text-slate-500 line-through" : "text-slate-200"}`}>
                       ×{b.qty} {b.part}
                     </span>
                     {b.url ? (
@@ -122,18 +90,8 @@ export default function AssemblyChecklist({
                     )}
                   </div>
                   {b.notes && (
-                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                      {b.notes}
-                    </p>
+                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">{b.notes}</p>
                   )}
-                </div>
-
-                <div
-                  className={`shrink-0 font-bold text-sm transition-colors ${
-                    checked[i] ? "text-slate-600" : "text-slate-400"
-                  }`}
-                >
-                  {formatUsd(b.priceUsd * b.qty)}
                 </div>
               </div>
             ))}
@@ -141,7 +99,7 @@ export default function AssemblyChecklist({
         </div>
       )}
 
-      {/* Digital items */}
+      {/* Digital / included items */}
       {includedItems.length > 0 && (
         <div>
           <h3 className="text-xs text-slate-600 tracking-widest uppercase font-medium mb-3">
@@ -149,22 +107,15 @@ export default function AssemblyChecklist({
           </h3>
           <div className="space-y-2">
             {includedItems.map((b, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-4 border border-slate-800/40 rounded-xl p-4"
-              >
+              <div key={i} className="flex items-center gap-4 border border-slate-800/40 rounded-xl p-4">
                 <div className="shrink-0 w-5 h-5 rounded border border-slate-800 bg-slate-900 flex items-center justify-center">
                   <span className="text-yellow-400 text-[10px]">✓</span>
                 </div>
                 <div className="flex-1">
                   <span className="text-slate-500 text-sm">{b.part}</span>
                   {b.url && (
-                    <a
-                      href={b.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ml-2 text-xs text-slate-600 hover:text-yellow-400 transition-colors underline underline-offset-2"
-                    >
+                    <a href={b.url} target="_blank" rel="noopener noreferrer"
+                      className="ml-2 text-xs text-slate-600 hover:text-yellow-400 transition-colors underline underline-offset-2">
                       {b.source} ↗
                     </a>
                   )}
