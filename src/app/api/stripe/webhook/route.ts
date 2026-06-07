@@ -39,7 +39,9 @@ export async function POST(req: NextRequest) {
 
     if (!p) return NextResponse.json({ ok: true });
 
-    const shipping = session.shipping_details;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const raw = session as any;
+    const shipping = raw.shipping_details ?? raw.shipping ?? null;
     const addr = shipping?.address;
 
     const orderId = randomUUID();
