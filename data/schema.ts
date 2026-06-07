@@ -1,4 +1,5 @@
-import { pgTable, text, timestamp, boolean, integer, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, integer, index, json } from "drizzle-orm/pg-core";
+import type { BomItem, ProductSpecs } from "./types";
 
 // better-auth required tables
 export const user = pgTable("user", {
@@ -55,9 +56,13 @@ export const verification = pgTable("verification", {
 
 export const product = pgTable("product", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),           // e.g. "M4-D2 Mobility Kit"
+  name: text("name").notNull(),            // e.g. "M4-D2 Mobility Kit"
   slug: text("slug").notNull().unique(),
+  tagline: text("tagline"),                // short punchy line for cards + hero
   description: text("description").notNull(),
+  highlights: json("highlights").$type<string[]>(),   // bullet points for the detail page
+  specs: json("specs").$type<ProductSpecs>(),         // key/value spec grid
+  bom: json("bom").$type<BomItem[]>(),                // full bill of materials
   priceUsd: integer("priceUsd").notNull(), // in cents
   stripePriceId: text("stripePriceId"),
   inStock: boolean("inStock").notNull().default(true),
