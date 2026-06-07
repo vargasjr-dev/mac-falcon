@@ -16,6 +16,191 @@ function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(0)}`;
 }
 
+// ─── Technical line-art icons — LEGO instruction manual style ──────────────
+function PartIcon({ part }: { part: string }) {
+  const name = part.toLowerCase();
+  const s = {
+    viewBox: "0 0 100 100",
+    className: "w-full h-full",
+    fill: "none" as const,
+    stroke: "currentColor",
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+
+  // iRobot Create 3 — top-down circular base with wheels + top-ring bolt holes
+  if (name.includes("irobot") || name.includes("create")) {
+    return (
+      <svg {...s}>
+        <circle cx="50" cy="52" r="36" strokeWidth="2" />
+        <rect x="8" y="42" width="8" height="20" rx="2" strokeWidth="1.5" />
+        <rect x="84" y="42" width="8" height="20" rx="2" strokeWidth="1.5" />
+        <circle cx="50" cy="52" r="24" strokeWidth="1" strokeDasharray="3 3" opacity={0.45} />
+        <path d="M 33 22 Q 50 14 67 22" strokeWidth="1.5" />
+        <circle cx="50" cy="27" r="2.5" strokeWidth="1.5" />
+        <circle cx="32" cy="38" r="2.5" strokeWidth="1.5" />
+        <circle cx="68" cy="38" r="2.5" strokeWidth="1.5" />
+        <circle cx="50" cy="56" r="9" strokeWidth="1.5" />
+        <circle cx="50" cy="56" r="3" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // Anker power bank — front view with LED indicators
+  if (
+    name.includes("anker") ||
+    name.includes("powercore") ||
+    name.includes("power bank") ||
+    name.includes("battery")
+  ) {
+    return (
+      <svg {...s}>
+        <rect x="12" y="26" width="68" height="42" rx="6" strokeWidth="2" />
+        <rect x="80" y="36" width="6" height="22" rx="2" strokeWidth="1.5" />
+        <circle cx="30" cy="47" r="3.5" fill="currentColor" stroke="none" opacity={0.9} />
+        <circle cx="42" cy="47" r="3.5" fill="currentColor" stroke="none" opacity={0.9} />
+        <circle cx="54" cy="47" r="3.5" fill="currentColor" stroke="none" opacity={0.9} />
+        <circle cx="66" cy="47" r="3.5" fill="currentColor" stroke="none" opacity={0.2} />
+        <rect x="36" y="14" width="28" height="12" rx="5" strokeWidth="1.5" />
+        <line x1="24" y1="60" x2="72" y2="60" strokeWidth="1" opacity={0.35} />
+      </svg>
+    );
+  }
+
+  // Lego Technic — cross-beams with axle holes
+  if (
+    name.includes("lego") ||
+    name.includes("technic") ||
+    name.includes("superstructure")
+  ) {
+    return (
+      <svg {...s}>
+        <rect x="8" y="40" width="84" height="18" rx="3" strokeWidth="2" />
+        <circle cx="22" cy="49" r="4.5" strokeWidth="1.5" />
+        <circle cx="34" cy="49" r="4.5" strokeWidth="1.5" />
+        <circle cx="46" cy="49" r="4.5" strokeWidth="1.5" />
+        <circle cx="58" cy="49" r="4.5" strokeWidth="1.5" />
+        <circle cx="70" cy="49" r="4.5" strokeWidth="1.5" />
+        <circle cx="82" cy="49" r="4.5" strokeWidth="1.5" />
+        <rect x="43" y="14" width="14" height="72" rx="3" strokeWidth="2" />
+        <circle cx="50" cy="26" r="4.5" strokeWidth="1.5" />
+        <circle cx="50" cy="38" r="4.5" strokeWidth="1.5" />
+        <circle cx="50" cy="62" r="4.5" strokeWidth="1.5" />
+        <circle cx="50" cy="74" r="4.5" strokeWidth="1.5" />
+        <circle cx="50" cy="49" r="6" strokeWidth="2.5" />
+        <circle cx="50" cy="49" r="2" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  // 3D printed cradle — bracket / shelf side view
+  if (
+    name.includes("cradle") ||
+    name.includes("3d") ||
+    name.includes("printed") ||
+    name.includes("pla")
+  ) {
+    return (
+      <svg {...s}>
+        <rect x="26" y="28" width="48" height="46" rx="4" strokeWidth="2" />
+        <path d="M 16 74 L 16 42 Q 16 28 26 28" strokeWidth="2" />
+        <path d="M 84 74 L 84 42 Q 84 28 74 28" strokeWidth="2" />
+        <rect x="10" y="74" width="80" height="10" rx="2" strokeWidth="2" />
+        <line x1="32" y1="28" x2="68" y2="28" strokeWidth="2.5" opacity={0.4} />
+        <circle cx="20" cy="81" r="2" strokeWidth="1.5" />
+        <circle cx="80" cy="81" r="2" strokeWidth="1.5" />
+        <line x1="34" y1="46" x2="66" y2="46" strokeWidth="1" opacity={0.4} />
+        <line x1="34" y1="54" x2="66" y2="54" strokeWidth="1" opacity={0.4} />
+        <line x1="34" y1="62" x2="66" y2="62" strokeWidth="1" opacity={0.4} />
+      </svg>
+    );
+  }
+
+  // Mounting hardware — bolts + grommet + adhesive strip
+  if (
+    name.includes("hardware") ||
+    name.includes("mounting") ||
+    name.includes("bolt") ||
+    name.includes("grommet") ||
+    name.includes("screw")
+  ) {
+    return (
+      <svg {...s}>
+        <circle cx="28" cy="27" r="9" strokeWidth="2" />
+        <line x1="22" y1="21" x2="34" y2="33" strokeWidth="1.5" opacity={0.55} />
+        <line x1="34" y1="21" x2="22" y2="33" strokeWidth="1.5" opacity={0.55} />
+        <rect x="25" y="36" width="6" height="22" rx="1" strokeWidth="1.5" />
+        <circle cx="72" cy="29" r="10" strokeWidth="2" />
+        <line x1="65" y1="23" x2="79" y2="35" strokeWidth="1.5" opacity={0.55} />
+        <line x1="79" y1="23" x2="65" y2="35" strokeWidth="1.5" opacity={0.55} />
+        <rect x="69" y="39" width="7" height="26" rx="1" strokeWidth="1.5" />
+        <circle cx="30" cy="75" r="9" strokeWidth="2" />
+        <circle cx="30" cy="75" r="4.5" strokeWidth="1.5" />
+        <rect x="55" y="69" width="32" height="12" rx="2" strokeWidth="1.5" />
+        <line x1="62" y1="69" x2="62" y2="81" strokeWidth="1" opacity={0.4} />
+        <line x1="69" y1="69" x2="69" y2="81" strokeWidth="1" opacity={0.4} />
+        <line x1="76" y1="69" x2="76" y2="81" strokeWidth="1" opacity={0.4} />
+        <line x1="83" y1="69" x2="83" y2="81" strokeWidth="1" opacity={0.4} />
+      </svg>
+    );
+  }
+
+  // USB-C cable — connectors + braided curve
+  if (
+    name.includes("cable") ||
+    name.includes("usb") ||
+    name.includes("braided") ||
+    name.includes("cord")
+  ) {
+    return (
+      <svg {...s}>
+        <rect x="6" y="41" width="16" height="18" rx="5" strokeWidth="2" />
+        <rect x="8" y="45" width="12" height="10" rx="3" strokeWidth="1" />
+        <rect x="78" y="41" width="16" height="18" rx="5" strokeWidth="2" />
+        <rect x="80" y="45" width="12" height="10" rx="3" strokeWidth="1" />
+        <path d="M 22 50 C 38 50 38 24 50 24 C 62 24 62 50 78 50" strokeWidth="2.5" />
+        <circle cx="36" cy="41" r="1.5" fill="currentColor" stroke="none" opacity={0.65} />
+        <circle cx="43" cy="33" r="1.5" fill="currentColor" stroke="none" opacity={0.65} />
+        <circle cx="50" cy="28" r="1.5" fill="currentColor" stroke="none" opacity={0.65} />
+        <circle cx="57" cy="33" r="1.5" fill="currentColor" stroke="none" opacity={0.65} />
+        <circle cx="64" cy="41" r="1.5" fill="currentColor" stroke="none" opacity={0.65} />
+      </svg>
+    );
+  }
+
+  // Digital / guide / software / BrickLink
+  if (
+    name.includes("guide") ||
+    name.includes("software") ||
+    name.includes("bricklink") ||
+    name.includes("digital") ||
+    name.includes("file")
+  ) {
+    return (
+      <svg {...s}>
+        <rect x="22" y="12" width="56" height="72" rx="4" strokeWidth="2" />
+        <path d="M 22 24 L 34 12" strokeWidth="2" />
+        <path d="M 34 12 L 34 24 L 22 24" strokeWidth="1.5" opacity={0.55} />
+        <line x1="34" y1="36" x2="66" y2="36" strokeWidth="1.5" />
+        <line x1="34" y1="46" x2="66" y2="46" strokeWidth="1.5" />
+        <line x1="34" y1="56" x2="58" y2="56" strokeWidth="1.5" />
+        <line x1="34" y1="66" x2="52" y2="66" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // Generic fallback
+  return (
+    <svg {...s}>
+      <rect x="22" y="26" width="56" height="54" rx="4" strokeWidth="2" />
+      <path d="M 22 44 L 78 44" strokeWidth="1.5" />
+      <path d="M 50 26 L 50 44" strokeWidth="1.5" />
+      <circle cx="50" cy="60" r="7" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+// ─── Build steps ────────────────────────────────────────────────────────────
 const BUILD_STEPS = [
   {
     number: "01",
@@ -54,8 +239,7 @@ export default async function GuidePage({ params }: Props) {
   if (!p) notFound();
 
   const bom: BomItem[] = p.bom ?? [];
-  const paidParts = bom.filter((b) => b.priceUsd > 0);
-  const includedDigital = bom.filter((b) => b.priceUsd === 0);
+  const totalPieces = bom.reduce((t, b) => t + b.qty, 0);
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-16">
@@ -99,75 +283,47 @@ export default async function GuidePage({ params }: Props) {
         </div>
       )}
 
-      {/* What's in the box */}
+      {/* ── What's in the box — LEGO / IKEA parts grid ── */}
       <section className="mb-16">
-        <h2 className="text-2xl font-black text-slate-100 tracking-tight mb-2">
+        <h2 className="text-2xl font-black text-slate-100 tracking-tight mb-1">
           What&apos;s in the box
         </h2>
         <p className="text-slate-500 text-sm mb-8">
-          Every component included in the {p.name}.
+          {bom.length} component{bom.length !== 1 ? "s" : ""} &middot;{" "}
+          {totalPieces} piece{totalPieces !== 1 ? "s" : ""} total
         </p>
 
-        <div className="space-y-3 mb-8">
-          {paidParts.map((item, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {bom.map((item, i) => (
             <div
               key={i}
-              className="flex items-start gap-4 border border-slate-800 rounded-xl p-4"
+              className="relative border border-slate-800 rounded-xl overflow-hidden group"
             >
-              <div className="shrink-0 w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 text-sm font-black">
+              {/* Technical illustration */}
+              <div className="aspect-square bg-slate-950/70 flex items-center justify-center p-8 text-yellow-400/40 group-hover:text-yellow-400/65 transition-colors duration-200">
+                <PartIcon part={item.part} />
+              </div>
+
+              {/* Qty badge — top-right, LEGO style */}
+              <div className="absolute top-2.5 right-2.5 bg-yellow-400 text-slate-900 text-[11px] font-black rounded-full px-1.5 py-[3px] leading-none tabular-nums z-10">
                 ×{item.qty}
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-2 mb-0.5">
-                  <span className="font-semibold text-slate-200 text-sm">{item.part}</span>
-                  {item.url ? (
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-slate-500 hover:text-yellow-400 transition-colors underline underline-offset-2"
-                    >
-                      {item.source} ↗
-                    </a>
-                  ) : (
-                    <span className="text-xs text-slate-600">{item.source}</span>
-                  )}
+
+              {/* Corner accent bracket */}
+              <span className="absolute top-2 left-2 w-3 h-3 border-t border-l border-yellow-500/20 rounded-tl pointer-events-none" />
+
+              {/* Label */}
+              <div className="p-3 border-t border-slate-800/80 bg-slate-900/25">
+                <div className="text-slate-200 text-xs font-bold leading-snug tracking-tight line-clamp-2">
+                  {item.part}
                 </div>
-                {item.notes && (
-                  <p className="text-xs text-slate-500 leading-relaxed">{item.notes}</p>
-                )}
-              </div>
-              <div className="shrink-0 text-slate-500 text-sm font-medium">
-                {formatPrice(item.priceUsd * item.qty)}
+                <div className="text-slate-600 text-[10px] mt-0.5 font-medium uppercase tracking-wider">
+                  {item.procure === "digital" ? "Digital" : item.source}
+                </div>
               </div>
             </div>
           ))}
         </div>
-
-        {/* Digital items */}
-        {includedDigital.length > 0 && (
-          <div className="border border-slate-800/50 rounded-xl divide-y divide-slate-800/50">
-            {includedDigital.map((item, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-3">
-                <span className="text-yellow-400 text-sm shrink-0">✓</span>
-                <span className="text-slate-500 text-sm flex-1">{item.part}</span>
-                {item.url && (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-slate-600 hover:text-yellow-400 transition-colors underline underline-offset-2 shrink-0"
-                  >
-                    View ↗
-                  </a>
-                )}
-                <span className="text-xs font-bold text-yellow-400/60 border border-yellow-500/20 rounded px-2 py-0.5">
-                  Free
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* Build steps */}

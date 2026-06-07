@@ -2,6 +2,7 @@ import { db } from "../../../../data/db";
 import { order, orderItem, product } from "../../../../data/schema";
 import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
+import CreateTestOrder from "./CreateTestOrder";
 
 export const dynamic = "force-dynamic";
 
@@ -61,11 +62,14 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <div className="mb-10">
-        <h1 className="text-3xl font-black text-slate-100 tracking-tight mb-1">
-          Mission Control
-        </h1>
-        <p className="text-slate-500 text-sm">Orders + assembly queue</p>
+      <div className="mb-10 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-slate-100 tracking-tight mb-1">
+            Mission Control
+          </h1>
+          <p className="text-slate-500 text-sm">Orders + assembly queue</p>
+        </div>
+        <CreateTestOrder />
       </div>
 
       {/* Stats */}
