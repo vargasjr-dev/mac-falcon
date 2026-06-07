@@ -2,6 +2,7 @@ import { db } from "../../../../../data/db";
 import { product } from "../../../../../data/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import BuyButton from "~/components/BuyButton";
 import type { BomItem } from "../../../../../data/types";
 
@@ -15,6 +16,7 @@ function formatPrice(cents: number) {
   return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 0 })}`;
 }
 
+// Pure display component — no event handlers, safe in a Server Component
 function BomRow({ item }: { item: BomItem }) {
   const isFree = item.priceUsd === 0;
   return (
@@ -33,7 +35,6 @@ function BomRow({ item }: { item: BomItem }) {
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
               className="text-xs text-slate-500 hover:text-yellow-400 transition-colors underline underline-offset-2"
             >
               {item.source} ↗
@@ -84,17 +85,22 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="max-w-5xl">
+
+      {/* Back */}
+      <Link
+        href="/shop"
+        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-300 transition-colors mb-10"
+      >
+        ← All kits
+      </Link>
+
       {/* ── Hero ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
+
         {/* Left: info + buy */}
         <div className="flex flex-col justify-center order-2 lg:order-1">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs font-bold text-yellow-400/60 border border-yellow-500/20 rounded px-2 py-1 tracking-widest uppercase">
-              v1
-            </span>
-            <span className="text-xs text-slate-600 font-medium">
-              Mac Falcon
-            </span>
+          <div className="text-xs font-bold text-slate-600 tracking-[0.3em] uppercase mb-4">
+            Mac Falcon
           </div>
 
           <h1 className="text-4xl sm:text-5xl font-black text-slate-100 tracking-tight mb-3 leading-tight">
@@ -146,19 +152,28 @@ export default async function ProductPage({ params }: Props) {
             />
           ) : (
             <div className="w-full aspect-square rounded-3xl bg-gradient-to-b from-slate-900 to-[#05070d] border border-slate-800 flex flex-col items-center justify-center relative overflow-hidden">
-              {/* Rings */}
+              {/* HUD corners */}
+              <span className="absolute top-4 left-4 w-5 h-5 border-t-2 border-l-2 border-yellow-500/25 rounded-tl-sm" />
+              <span className="absolute top-4 right-4 w-5 h-5 border-t-2 border-r-2 border-yellow-500/25 rounded-tr-sm" />
+              <span className="absolute bottom-4 left-4 w-5 h-5 border-b-2 border-l-2 border-yellow-500/25 rounded-bl-sm" />
+              <span className="absolute bottom-4 right-4 w-5 h-5 border-b-2 border-r-2 border-yellow-500/25 rounded-br-sm" />
+
+              {/* Targeting rings */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-[420px] h-[420px] rounded-full border border-yellow-400/5" />
-                <div className="absolute w-[280px] h-[280px] rounded-full border border-yellow-400/8" />
-                <div className="absolute w-[140px] h-[140px] rounded-full border border-yellow-400/12" />
+                <div className="w-[380px] h-[380px] rounded-full border border-yellow-400/[0.05]" />
+                <div className="absolute w-[250px] h-[250px] rounded-full border border-yellow-400/[0.07]" />
+                <div className="absolute w-[120px] h-[120px] rounded-full border border-yellow-400/[0.1]" />
+                <div className="absolute w-[380px] h-[1px] bg-yellow-400/[0.03]" />
+                <div className="absolute w-[1px] h-[380px] bg-yellow-400/[0.03]" />
               </div>
+
               <div className="relative text-center">
-                <div className="text-7xl mb-5">🦅</div>
+                <div className="text-7xl mb-5 drop-shadow-[0_0_30px_rgba(250,204,21,0.25)]">🦅</div>
                 <div className="text-6xl font-black text-slate-100 tracking-tight mb-1">
                   M4-D2
                 </div>
-                <div className="text-slate-600 text-xs tracking-[0.4em] uppercase">
-                  Mobility Kit · v1
+                <div className="text-slate-600 text-[10px] tracking-[0.4em] uppercase">
+                  Mobility Kit
                 </div>
               </div>
             </div>
@@ -176,7 +191,7 @@ export default async function ProductPage({ params }: Props) {
             {Object.entries(specs).map(([key, val]) => (
               <div
                 key={key}
-                className="grid grid-cols-2 px-5 py-3 hover:bg-slate-900/40 transition-colors"
+                className="grid grid-cols-2 px-5 py-3.5 hover:bg-slate-900/40 transition-colors"
               >
                 <span className="text-slate-500 text-sm">{key}</span>
                 <span className="text-slate-200 text-sm font-medium">{val}</span>
@@ -189,15 +204,13 @@ export default async function ProductPage({ params }: Props) {
       {/* ── BOM ── */}
       {bom.length > 0 && (
         <section className="mb-16">
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-black text-slate-100 tracking-tight">
-                What&apos;s in the kit
-              </h2>
-              <p className="text-slate-500 text-sm mt-1">
-                Every component, sourced and spec&apos;d for the M4-D2.
-              </p>
-            </div>
+          <div className="mb-6">
+            <h2 className="text-xl font-black text-slate-100 tracking-tight">
+              What&apos;s in the kit
+            </h2>
+            <p className="text-slate-500 text-sm mt-1">
+              Every component, sourced and spec&apos;d for the M4-D2.
+            </p>
           </div>
 
           <div className="space-y-3 mb-6">
@@ -206,16 +219,16 @@ export default async function ProductPage({ params }: Props) {
             ))}
           </div>
 
-          {/* Pricing summary */}
+          {/* Pricing breakdown */}
           <div className="border border-slate-800 rounded-2xl overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
               <span className="text-slate-400 text-sm">Total component value</span>
               <span className="text-slate-300 font-bold">{formatPrice(componentTotal)}</span>
             </div>
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
-              <div>
-                <span className="text-slate-400 text-sm">Mac Falcon curation + assembly guide + software</span>
-              </div>
+              <span className="text-slate-400 text-sm">
+                Curation, assembly guide &amp; software
+              </span>
               <span className="text-slate-300 font-bold">{formatPrice(markup)}</span>
             </div>
             <div className="flex items-center justify-between px-5 py-5 bg-slate-900/40">

@@ -69,9 +69,6 @@ export default async function ShopPage() {
                     <h2 className="font-black text-slate-100 text-xl tracking-tight">
                       {p.name}
                     </h2>
-                    <span className="text-xs font-bold text-yellow-400/60 border border-yellow-500/20 rounded px-1.5 py-0.5 tracking-widest uppercase">
-                      v1
-                    </span>
                   </div>
                   {p.tagline && (
                     <p className="text-slate-400 text-sm">{p.tagline}</p>
