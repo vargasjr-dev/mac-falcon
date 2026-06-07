@@ -80,6 +80,7 @@ export const order = pgTable(
     stripeSessionId: text("stripeSessionId").notNull().unique(),
     stripePaymentIntentId: text("stripePaymentIntentId"),
     status: text("status").notNull().default("pending"), // 'pending' | 'paid' | 'shipped' | 'cancelled'
+    isTest: boolean("isTest").notNull().default(false),
     totalUsd: integer("totalUsd").notNull(), // in cents
     shippingName: text("shippingName"),
     shippingAddress: text("shippingAddress"),

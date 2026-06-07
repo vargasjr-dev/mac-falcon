@@ -43,6 +43,7 @@ export async function POST() {
     stripeSessionId: `cs_dummy_${Date.now()}_${randomUUID().replace(/-/g, "").slice(0, 8)}`,
     stripePaymentIntentId: null,
     status: "paid",
+    isTest: true,
     totalUsd: p.priceUsd,
     shippingName: fakeName,
     shippingAddress: fakeAddress,

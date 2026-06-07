@@ -32,12 +32,13 @@ export default async function AdminDashboardPage() {
   const orders = await db
     .select({
       id: order.id,
-      email: order.email,
-      status: order.status,
-      totalUsd: order.totalUsd,
-      shippingName: order.shippingName,
-      shippingAddress: order.shippingAddress,
-      createdAt: order.createdAt,
+          email: order.email,
+          status: order.status,
+          isTest: order.isTest,
+          totalUsd: order.totalUsd,
+          shippingName: order.shippingName,
+          shippingAddress: order.shippingAddress,
+          createdAt: order.createdAt,
     })
     .from(order)
     .orderBy(desc(order.createdAt));
@@ -113,8 +114,15 @@ export default async function AdminDashboardPage() {
               className="grid grid-cols-[1fr_auto_auto_auto] px-5 py-4 border-b border-slate-800/60 last:border-0 hover:bg-slate-900/40 transition-colors items-center"
             >
               <div>
-                <div className="text-slate-200 text-sm font-medium">
-                  {o.shippingName ?? o.email}
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-200 text-sm font-medium">
+                    {o.shippingName ?? o.email}
+                  </span>
+                  {o.isTest && (
+                    <span className="text-[10px] font-black tracking-widest uppercase px-1.5 py-0.5 rounded border border-slate-600 text-slate-500">
+                      TEST
+                    </span>
+                  )}
                 </div>
                 <div className="text-slate-600 text-xs mt-0.5">
                   {o.shippingAddress ?? o.email} · {formatDate(o.createdAt)}
