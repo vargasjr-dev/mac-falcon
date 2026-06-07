@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { stripe } from "~/lib/stripe";
 import { db } from "../../../../../data/db";
 import { order, orderItem, product } from "../../../../../data/schema";
 import { eq } from "drizzle-orm";
