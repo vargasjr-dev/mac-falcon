@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "~/lib/stripe";
+import Stripe from "stripe";
 import { db } from "../../../../../data/db";
 import { order, orderItem, product } from "../../../../../data/schema";
 import { eq } from "drizzle-orm";
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
+    const session = event.data.object as Stripe.Checkout.Session;
     const productId = session.metadata?.productId;
 
     if (!productId) {
