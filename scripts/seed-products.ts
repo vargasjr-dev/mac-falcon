@@ -47,6 +47,7 @@ const m4d2Bom: BomItem[] = [
     url: "https://edu.irobot.com/create3",
     notes:
       "The robot base — differential drive, 9 kg payload, autonomous docking, ROS 2 native. The foundation everything else builds on.",
+    procure: "per_order",
   },
   {
     qty: 1,
@@ -56,6 +57,8 @@ const m4d2Bom: BomItem[] = [
     url: "https://www.amazon.com/dp/B09VPHVT2Z",
     notes:
       "140 W output — enough to run a Mac Mini M4 at full throttle. 24,000 mAh gets you 4–6 hours of untethered operation.",
+    procure: "bulk",
+    batchSize: 5,
   },
   {
     qty: 1,
@@ -64,6 +67,8 @@ const m4d2Bom: BomItem[] = [
     priceUsd: 8500,
     notes:
       "Curated Technic pieces — pre-kitted for the M4-D2 frame. Mounts to the Create 3 top ring, creates a stable shelf for the power bank and Mac Mini. BrickLink Studio file included.",
+    procure: "bulk",
+    batchSize: 10,
   },
   {
     qty: 1,
@@ -72,6 +77,8 @@ const m4d2Bom: BomItem[] = [
     priceUsd: 2500,
     notes:
       "Custom 3D-printed PLA+ cradle — precision fit for Mac Mini 2024. Holds the Mac Mini securely without blocking any ports.",
+    procure: "in_house",
+    batchSize: 10,
   },
   {
     qty: 1,
@@ -80,6 +87,8 @@ const m4d2Bom: BomItem[] = [
     priceUsd: 1000,
     notes:
       "M3 and M4 bolts, rubber grommets, and adhesive strips for attaching the Technic frame to the Create 3.",
+    procure: "bulk",
+    batchSize: 50,
   },
   {
     qty: 2,
@@ -88,6 +97,8 @@ const m4d2Bom: BomItem[] = [
     priceUsd: 1200,
     notes:
       "One for power (power bank → Mac Mini), one for data (Mac Mini → Create 3 USB-C adapter). Braided for tangle resistance.",
+    procure: "bulk",
+    batchSize: 10,
   },
   {
     qty: 1,
@@ -96,6 +107,7 @@ const m4d2Bom: BomItem[] = [
     priceUsd: 0,
     notes:
       "Step-by-step build instructions with photos. BrickLink Studio file for the Technic superstructure. PDF delivered by email.",
+    procure: "digital",
   },
   {
     qty: 1,
@@ -105,6 +117,7 @@ const m4d2Bom: BomItem[] = [
     url: "https://github.com/vargasjr-dev/mac-falcon",
     notes:
       "Open-source ROS 2 bridge — runs on your Mac Mini and lets you drive the Create 3, read sensors, and send it home.",
+    procure: "digital",
   },
 ];
 

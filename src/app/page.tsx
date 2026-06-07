@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import RotatingText from "~/components/RotatingText";
 import StarField from "~/components/StarField";
 
@@ -15,10 +16,7 @@ export default function HomePage() {
 
       {/* ── Deep space background ── */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {/* Starfield */}
         <StarField count={220} />
-
-        {/* Subtle grid overlay — like a targeting computer */}
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
@@ -27,8 +25,6 @@ export default function HomePage() {
             backgroundSize: "60px 60px",
           }}
         />
-
-        {/* Deep amber nebula glow */}
         <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-yellow-400/[0.04] rounded-full blur-[180px]" />
         <div className="absolute bottom-0 right-[-10%] w-[600px] h-[600px] bg-blue-700/[0.04] rounded-full blur-[160px]" />
       </div>
@@ -51,8 +47,6 @@ export default function HomePage() {
 
       {/* ── Hero ── */}
       <section className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 pt-8 pb-8">
-
-        {/* Status beacon */}
         <div className="inline-flex items-center gap-2.5 border border-yellow-500/25 rounded-full px-4 py-1.5 text-xs font-bold text-yellow-400/80 tracking-[0.2em] uppercase mb-10 bg-yellow-500/[0.05]">
           <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
           Now deploying — M4-D2
@@ -61,11 +55,9 @@ export default function HomePage() {
         <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[0.88] mb-3 max-w-4xl">
           <span className="text-slate-100">Give your</span>
           <br />
-          {/* Rotating agent name */}
           <RotatingText />
         </h1>
 
-        {/* "a body." on its own line, slightly smaller */}
         <p className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-300 mb-8 leading-tight">
           a body.
         </p>
@@ -107,36 +99,19 @@ export default function HomePage() {
           {/* HUD corner brackets */}
           <span className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-yellow-500/30 rounded-tl-sm group-hover:border-yellow-400/60 transition-colors z-10" />
           <span className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-yellow-500/30 rounded-tr-sm group-hover:border-yellow-400/60 transition-colors z-10" />
-          <span className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-yellow-500/30 rounded-bl-sm group-hover:border-yellow-400/60 transition-colors z-10" />
-          <span className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-yellow-500/30 rounded-br-sm group-hover:border-yellow-400/60 transition-colors z-10" />
+          <span className="absolute bottom-[68px] left-3 w-5 h-5 border-b-2 border-l-2 border-yellow-500/30 rounded-bl-sm group-hover:border-yellow-400/60 transition-colors z-10" />
+          <span className="absolute bottom-[68px] right-3 w-5 h-5 border-b-2 border-r-2 border-yellow-500/30 rounded-br-sm group-hover:border-yellow-400/60 transition-colors z-10" />
 
-          {/* Product render */}
-          <div className="w-full bg-gradient-to-b from-slate-900/80 to-[#05070d] flex flex-col items-center justify-center py-20 px-8 relative overflow-hidden">
-            {/* Targeting rings */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-[520px] h-[520px] rounded-full border border-yellow-400/[0.04]" />
-              <div className="absolute w-[360px] h-[360px] rounded-full border border-yellow-400/[0.06]" />
-              <div className="absolute w-[200px] h-[200px] rounded-full border border-yellow-400/[0.09]" />
-              {/* Cross-hairs */}
-              <div className="absolute w-[520px] h-[1px] bg-yellow-400/[0.03]" />
-              <div className="absolute w-[1px] h-[520px] bg-yellow-400/[0.03]" />
-            </div>
-
-            {/* Identity */}
-            <div className="relative text-center">
-              <div className="text-7xl mb-5 group-hover:scale-105 transition-transform duration-700 ease-out drop-shadow-[0_0_30px_rgba(250,204,21,0.3)]">
-                🦅
-              </div>
-              <div className="text-[10px] font-bold tracking-[0.5em] text-yellow-400/40 uppercase mb-2">
-                Mac Falcon
-              </div>
-              <div className="text-5xl sm:text-6xl font-black text-slate-100 tracking-tight mb-1">
-                M4-D2
-              </div>
-              <div className="text-slate-600 text-xs font-medium tracking-[0.35em] uppercase">
-                Mobility Kit
-              </div>
-            </div>
+          {/* Product image */}
+          <div className="w-full bg-gradient-to-b from-slate-950 to-[#05070d] overflow-hidden relative">
+            <Image
+              src="/images/m4d2-product.png"
+              alt="M4-D2 Mobility Kit"
+              width={1200}
+              height={900}
+              className="w-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
+              priority
+            />
           </div>
 
           {/* Specs strip */}
