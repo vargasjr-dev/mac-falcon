@@ -2,7 +2,7 @@ import { db } from "../../../../data/db";
 import { product } from "../../../../data/schema";
 import Link from "next/link";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function ShopPage() {
   const products = await db.select().from(product).orderBy(product.createdAt);
