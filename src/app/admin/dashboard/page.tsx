@@ -2,9 +2,13 @@ import { db } from "../../../../data/db";
 import { order, orderItem, product } from "../../../../data/schema";
 import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
+import { Suspense } from "react";
 import CreateTestOrder from "./CreateTestOrder";
+import OrderFilter from "./OrderFilter";
 
 export const dynamic = "force-dynamic";
+
+type Filter = "all" | "live" | "test";
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-slate-800 text-slate-400",
@@ -28,24 +32,47 @@ function formatDate(d: Date) {
   });
 }
 
-export default async function AdminDashboardPage() {
-  const orders = await db
+interface Props {
+  searchParams: Promise<{ filter?: string }>;
+}
+
+export default async function AdminDashboardPage({ searchParams }: Props) {
+  const { filter: rawFilter } = await searchParams;
+  const filter: Filter =
+    rawFilter === "live" || rawFilter === "test" ? rawFilter : "all";
+
+  const allOrders = await db
     .select({
       id: order.id,
-          email: order.email,
-          status: order.status,
-          isTest: order.isTest,
-          totalUsd: order.totalUsd,
-          shippingName: order.shippingName,
-          shippingAddress: order.shippingAddress,
-          createdAt: order.createdAt,
+      email: order.email,
+      status: order.status,
+      isTest: order.isTest,
+      totalUsd: order.totalUsd,
+      shippingName: order.shippingName,
+      shippingAddress: order.shippingAddress,
+      createdAt: order.createdAt,
     })
     .from(order)
     .orderBy(desc(order.createdAt));
 
-  // For each order get the product name
+  // Stats always from live orders only
+  const liveOrders = allOrders.filter((o) => !o.isTest);
+  const totalRevenue = liveOrders.reduce((s, o) => s + o.totalUsd, 0);
+  const paid = liveOrders.filter((o) => o.status === "paid").length;
+  const assembling = liveOrders.filter((o) => o.status === "assembling").length;
+  const shipped = liveOrders.filter((o) => o.status === "shipped").length;
+
+  // Filtered list for the table
+  const visibleOrders =
+    filter === "live"
+      ? allOrders.filter((o) => !o.isTest)
+      : filter === "test"
+      ? allOrders.filter((o) => o.isTest)
+      : allOrders;
+
+  // Product names
   const orderProducts: Record<string, string> = {};
-  for (const o of orders) {
+  for (const o of visibleOrders) {
     const [item] = await db
       .select({ productName: product.name })
       .from(orderItem)
@@ -54,12 +81,6 @@ export default async function AdminDashboardPage() {
       .limit(1);
     if (item) orderProducts[o.id] = item.productName;
   }
-
-  // Stats
-  const totalRevenue = orders.reduce((s, o) => s + o.totalUsd, 0);
-  const paid = orders.filter((o) => o.status === "paid").length;
-  const assembling = orders.filter((o) => o.status === "assembling").length;
-  const shipped = orders.filter((o) => o.status === "shipped").length;
 
   return (
     <div>
@@ -70,13 +91,18 @@ export default async function AdminDashboardPage() {
           </h1>
           <p className="text-slate-500 text-sm">Orders + assembly queue</p>
         </div>
-        <CreateTestOrder />
+        <div className="flex items-center gap-3">
+          <Suspense>
+            <OrderFilter current={filter} />
+          </Suspense>
+          <CreateTestOrder />
+        </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats — always live orders only */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
         {[
-          { label: "Total orders", value: orders.length, color: "text-slate-100" },
+          { label: "Live orders", value: liveOrders.length, color: "text-slate-100" },
           { label: "Revenue", value: formatUsd(totalRevenue), color: "text-yellow-400" },
           { label: "Needs assembly", value: paid + assembling, color: "text-blue-400" },
           { label: "Shipped", value: shipped, color: "text-green-400" },
@@ -94,10 +120,18 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Orders table */}
-      {orders.length === 0 ? (
+      {visibleOrders.length === 0 ? (
         <div className="border border-slate-800 rounded-2xl p-16 text-center">
-          <div className="text-4xl mb-4">📭</div>
-          <p className="text-slate-500">No orders yet. Share the site!</p>
+          <div className="text-4xl mb-4">
+            {filter === "test" ? "🧪" : "📭"}
+          </div>
+          <p className="text-slate-500">
+            {filter === "test"
+              ? "No test orders. Use the + Test order button to create one."
+              : filter === "live"
+              ? "No live orders yet. Share the site!"
+              : "No orders yet. Share the site!"}
+          </p>
         </div>
       ) : (
         <div className="border border-slate-800 rounded-2xl overflow-hidden">
@@ -107,7 +141,7 @@ export default async function AdminDashboardPage() {
             <span className="text-right pr-6">Total</span>
             <span className="text-right">Status</span>
           </div>
-          {orders.map((o) => (
+          {visibleOrders.map((o) => (
             <Link
               key={o.id}
               href={`/admin/orders/${o.id}`}
