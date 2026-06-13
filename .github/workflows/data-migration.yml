@@ -32,7 +32,6 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && github.event.label.name == 'run-migration')
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       - name: Checkout
