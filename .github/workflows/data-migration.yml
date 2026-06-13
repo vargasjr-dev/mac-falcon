@@ -10,7 +10,7 @@ name: Run data migration
 #   - The workflow runs the newest file (by name sort) in migrations/data/
 #     unless a specific file is given via workflow_dispatch input
 #
-# Required secret: DATABASE_URL_UNPOOLED
+# Required secret: DATABASE_URL
 #   Add via: GitHub repo → Settings → Secrets → Actions → New repository secret
 
 on:
@@ -66,7 +66,7 @@ jobs:
 
       - name: Run migration
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_UNPOOLED }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           echo "▶ Running migration: ${{ steps.detect.outputs.file }}"
           bun run "${{ steps.detect.outputs.file }}"
