@@ -1,7 +1,7 @@
 name: Apply schema migration
 
-# Runs automatically on push to main when schema.ts changes.
-# Uses `drizzle-kit push --force` to sync the DB — safe for Neon (idempotent on existing tables).
+# Runs automatically on push to main when schema.ts or drizzle migrations change.
+# Uses `drizzle-kit migrate` to apply SQL migration files — deterministic, no TTY required.
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Push schema to DB
+      - name: Apply migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: bun run db:push
+        run: bun run db:migrate
