@@ -72,6 +72,20 @@ export default async function OrderDetailPage({ params }: Props) {
   const checklistRows = allBom
     .filter((b) => b.bom.procure !== "digital")
     .map((b) => {
+      // in_house entries (e.g. manufacturing labor) use BOM price directly — no supply purchase needed
+      if (b.bom.procure === "in_house") {
+        return {
+          part: b.bom.part,
+          qty: b.qty,
+          source: b.bom.source,
+          url: b.bom.url,
+          notes: b.bom.notes,
+          unitCost: b.bom.priceUsd,
+          actual: true,
+          bomEstimate: b.bom.priceUsd,
+          isLabor: true,
+        };
+      }
       const { cost, actual } = findUnitCost(b.bom.part);
       return {
         part: b.bom.part,
@@ -82,6 +96,7 @@ export default async function OrderDetailPage({ params }: Props) {
         unitCost: cost,
         actual,
         bomEstimate: b.bom.priceUsd,
+        isLabor: false,
       };
     });
 

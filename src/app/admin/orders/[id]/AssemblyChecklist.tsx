@@ -9,8 +9,9 @@ interface ChecklistRow {
   url?: string;
   notes?: string;
   unitCost: number; // cents — 0 if no purchase logged
-  actual: boolean; // true = pulled from supply purchase log
+  actual: boolean; // true = pulled from supply purchase log or in_house
   bomEstimate: number; // cents — from BOM priceUsd
+  isLabor?: boolean; // true = in_house manufacturing / labor line
 }
 
 interface IncludedRow {
@@ -48,10 +49,16 @@ export default function AssemblyChecklist({
 
   const doneCount = Object.values(checked).filter(Boolean).length;
 
+  // Always compute estimated COGS and margin using BOM estimates for non-actual rows
+  const estimatedCogs = checklistRows.reduce(
+    (s, r) => s + (r.actual ? r.unitCost * r.qty : r.bomEstimate * r.qty),
+    0,
+  );
   const margin =
-    hasActualCogs && orderTotal > 0
-      ? `${(((orderTotal - totalCogs) / orderTotal) * 100).toFixed(0)}%`
+    orderTotal > 0
+      ? `${(((orderTotal - estimatedCogs) / orderTotal) * 100).toFixed(0)}%`
       : "—";
+  const cogsLabel = hasActualCogs ? "COGS" : "Est. COGS";
 
   return (
     <section className="border border-slate-800 rounded-2xl p-6 mb-8 bg-slate-900/20">
@@ -125,7 +132,11 @@ export default function AssemblyChecklist({
                     >
                       ×{row.qty} {row.part}
                     </span>
-                    {row.url ? (
+                    {row.isLabor ? (
+                      <span className="text-xs font-bold text-blue-400/80 border border-blue-500/30 rounded px-2 py-0.5">
+                        Labor
+                      </span>
+                    ) : row.url ? (
                       <a
                         href={row.url}
                         target="_blank"
@@ -204,18 +215,28 @@ export default function AssemblyChecklist({
         </div>
       )}
 
-      {/* Footer: margin */}
-      <div className="border-t border-slate-800 pt-3 flex items-center justify-between">
-        <span className="text-slate-500 text-xs">
-          {hasActualCogs ? "Actual + estimated" : "All estimated from BOM"}
-        </span>
-        <div className="text-right">
-          {hasActualCogs && totalCogs > 0 && (
-            <div className="text-yellow-400 font-black text-lg">
-              {formatUsd(totalCogs)}
+      {/* Footer: COGS + margin */}
+      <div className="border-t border-slate-800 pt-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-slate-500 text-xs">
+            {hasActualCogs ? "Actual + estimated" : "All estimated from BOM"}
+          </span>
+          <div className="text-right">
+            <div className="text-yellow-400 font-black text-lg leading-tight">
+              {formatUsd(estimatedCogs)}
             </div>
-          )}
-          <div className="text-xs text-slate-600">Margin: {margin}</div>
+            <div className="text-xs text-slate-600">{cogsLabel}</div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-slate-500 text-xs">Sale price</span>
+          <span className="text-slate-300 font-semibold text-sm">{formatUsd(orderTotal)}</span>
+        </div>
+        <div className="flex items-center justify-between border-t border-slate-800/60 pt-2">
+          <span className="text-slate-400 text-xs font-medium">Margin</span>
+          <span className={`font-black text-base ${parseInt(margin) > 30 ? "text-green-400" : parseInt(margin) > 10 ? "text-yellow-400" : "text-red-400"}`}>
+            {margin}
+          </span>
         </div>
       </div>
     </section>
