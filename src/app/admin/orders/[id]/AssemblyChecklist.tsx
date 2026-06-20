@@ -1,7 +1,19 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 
-interface BomRow {
+interface ChecklistRow {
+  part: string;
+  qty: number;
+  source: string;
+  url?: string;
+  notes?: string;
+  unitCost: number; // cents — 0 if no purchase logged
+  actual: boolean; // true = pulled from supply purchase log
+  bomEstimate: number; // cents — from BOM priceUsd
+}
+
+interface IncludedRow {
   part: string;
   qty: number;
   source: string;
@@ -10,11 +22,24 @@ interface BomRow {
 }
 
 interface Props {
-  paidComponents: BomRow[];
-  includedItems: BomRow[];
+  checklistRows: ChecklistRow[];
+  includedItems: IncludedRow[];
+  totalCogs: number; // cents
+  orderTotal: number; // cents
+  hasActualCogs: boolean;
 }
 
-export default function AssemblyChecklist({ paidComponents, includedItems }: Props) {
+function formatUsd(cents: number) {
+  return `$${(cents / 100).toFixed(0)}`;
+}
+
+export default function AssemblyChecklist({
+  checklistRows,
+  includedItems,
+  totalCogs,
+  orderTotal,
+  hasActualCogs,
+}: Props) {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
 
   function toggle(i: number) {
@@ -22,29 +47,38 @@ export default function AssemblyChecklist({ paidComponents, includedItems }: Pro
   }
 
   const doneCount = Object.values(checked).filter(Boolean).length;
-  const totalCount = paidComponents.length;
+
+  const margin =
+    hasActualCogs && orderTotal > 0
+      ? `${(((orderTotal - totalCogs) / orderTotal) * 100).toFixed(0)}%`
+      : "—";
 
   return (
-    <section className="mb-8">
-      <div className="flex items-center justify-between mb-5">
+    <section className="border border-slate-800 rounded-2xl p-6 mb-8 bg-slate-900/20">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-1">
         <h2 className="text-lg font-black text-slate-100 tracking-tight">
-          Assembly checklist
+          Build checklist
         </h2>
-        {totalCount > 0 && (
-          <span className="text-xs text-slate-500 font-medium">
-            {doneCount}/{totalCount} sourced
-          </span>
-        )}
+        <Link
+          href="/admin/supplies"
+          className="text-xs text-slate-500 hover:text-yellow-400 transition-colors"
+        >
+          Log purchase →
+        </Link>
+      </div>
+      <div className="text-xs text-slate-600 mb-5">
+        {doneCount}/{checklistRows.length} sourced
       </div>
 
-      {/* Parts to source */}
-      {paidComponents.length > 0 && (
+      {/* Parts to source / procure */}
+      {checklistRows.length > 0 && (
         <div className="mb-6">
           <h3 className="text-xs text-slate-600 tracking-widest uppercase font-medium mb-3">
             Parts to source / procure
           </h3>
           <div className="space-y-2">
-            {paidComponents.map((b, i) => (
+            {checklistRows.map((row, i) => (
               <div
                 key={i}
                 onClick={() => toggle(i)}
@@ -63,34 +97,68 @@ export default function AssemblyChecklist({ paidComponents, includedItems }: Pro
                   }`}
                 >
                   {checked[i] && (
-                    <svg className="w-3 h-3 text-slate-900" viewBox="0 0 12 12" fill="none">
-                      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <svg
+                      className="w-3 h-3 text-slate-900"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                    >
+                      <path
+                        d="M2 6l3 3 5-5"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   )}
                 </div>
 
-                {/* Part details */}
+                {/* Part info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={`font-semibold text-sm transition-colors ${checked[i] ? "text-slate-500 line-through" : "text-slate-200"}`}>
-                      ×{b.qty} {b.part}
+                    <span
+                      className={`font-semibold text-sm transition-colors ${
+                        checked[i]
+                          ? "text-slate-500 line-through"
+                          : "text-slate-200"
+                      }`}
+                    >
+                      ×{row.qty} {row.part}
                     </span>
-                    {b.url ? (
+                    {row.url ? (
                       <a
-                        href={b.url}
+                        href={row.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className="text-xs text-slate-500 hover:text-yellow-400 transition-colors underline underline-offset-2"
                       >
-                        {b.source} ↗
+                        {row.source} ↗
                       </a>
                     ) : (
-                      <span className="text-xs text-slate-600">{b.source}</span>
+                      <span className="text-xs text-slate-600">
+                        {row.source}
+                      </span>
                     )}
                   </div>
-                  {b.notes && (
-                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">{b.notes}</p>
+                  {row.notes && (
+                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                      {row.notes}
+                    </p>
+                  )}
+                </div>
+
+                {/* Cost */}
+                <div className="shrink-0 tabular-nums text-sm text-right">
+                  {row.actual ? (
+                    <span className="text-slate-300 font-semibold">
+                      {formatUsd(row.unitCost * row.qty)}
+                    </span>
+                  ) : (
+                    <span className="text-slate-600">
+                      ~{formatUsd(row.bomEstimate * row.qty)}{" "}
+                      <span className="text-slate-700 text-xs">est.</span>
+                    </span>
                   )}
                 </div>
               </div>
@@ -99,23 +167,30 @@ export default function AssemblyChecklist({ paidComponents, includedItems }: Pro
         </div>
       )}
 
-      {/* Digital / included items */}
+      {/* Digital / included */}
       {includedItems.length > 0 && (
-        <div>
+        <div className="mb-5">
           <h3 className="text-xs text-slate-600 tracking-widest uppercase font-medium mb-3">
             Digital / included
           </h3>
           <div className="space-y-2">
             {includedItems.map((b, i) => (
-              <div key={i} className="flex items-center gap-4 border border-slate-800/40 rounded-xl p-4">
+              <div
+                key={i}
+                className="flex items-center gap-4 border border-slate-800/40 rounded-xl p-4"
+              >
                 <div className="shrink-0 w-5 h-5 rounded border border-slate-800 bg-slate-900 flex items-center justify-center">
                   <span className="text-yellow-400 text-[10px]">✓</span>
                 </div>
                 <div className="flex-1">
                   <span className="text-slate-500 text-sm">{b.part}</span>
                   {b.url && (
-                    <a href={b.url} target="_blank" rel="noopener noreferrer"
-                      className="ml-2 text-xs text-slate-600 hover:text-yellow-400 transition-colors underline underline-offset-2">
+                    <a
+                      href={b.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-2 text-xs text-slate-600 hover:text-yellow-400 transition-colors underline underline-offset-2"
+                    >
                       {b.source} ↗
                     </a>
                   )}
@@ -128,6 +203,21 @@ export default function AssemblyChecklist({ paidComponents, includedItems }: Pro
           </div>
         </div>
       )}
+
+      {/* Footer: margin */}
+      <div className="border-t border-slate-800 pt-3 flex items-center justify-between">
+        <span className="text-slate-500 text-xs">
+          {hasActualCogs ? "Actual + estimated" : "All estimated from BOM"}
+        </span>
+        <div className="text-right">
+          {hasActualCogs && totalCogs > 0 && (
+            <div className="text-yellow-400 font-black text-lg">
+              {formatUsd(totalCogs)}
+            </div>
+          )}
+          <div className="text-xs text-slate-600">Margin: {margin}</div>
+        </div>
+      </div>
     </section>
   );
 }
