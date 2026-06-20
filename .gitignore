@@ -4,4 +4,4 @@ node_modules
 .env.local
 .vercel
 *.tsbuildinfo
-drizzle/meta
+# drizzle/meta is intentionally tracked for CI migrations
