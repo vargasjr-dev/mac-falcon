@@ -20,7 +20,8 @@ import type { BomItem } from "../../data/types";
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
 
-const MANUFACTURING_COST_CENTS = 7500; // $75.00 — adjust to match your actual hourly rate × build time
+// $150.00 = $40/hr industry rate for skilled electronics/robotics assembly × 1.25 markup × 3 hrs build time
+const MANUFACTURING_COST_CENTS = 15000;
 
 async function run() {
   console.log("▶ 003-add-manufacturing-cost: adding labor line to M4-D2 BOM...");
@@ -47,7 +48,7 @@ async function run() {
     source: "Mac Falcon",
     priceUsd: MANUFACTURING_COST_CENTS,
     notes:
-      "Vargas's time to assemble one unit: chassis fabrication, wiring, firmware flash, calibration, and QA. Adjust priceUsd in the migration to match actual hourly rate × build time.",
+      "Assembly labor: chassis fabrication, wiring, firmware flash, calibration, and QA. Priced at $40/hr (skilled electronics/robotics assembly industry rate) × 1.25 markup × 3 hrs = $150/unit.",
     procure: "in_house",
   });
 

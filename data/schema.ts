@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, integer, index, json } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, integer, index, json, jsonb } from "drizzle-orm/pg-core";
 import type { BomItem, ProductSpecs } from "./types";
 
 // better-auth required tables
@@ -100,6 +100,15 @@ export const supplyPurchase = pgTable("supply_purchase", {
   notes: text("notes"),
   purchasedAt: timestamp("purchasedAt").notNull().defaultNow(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
+});
+
+export const falconApiKey = pgTable("falcon_api_key", {
+  id: text("id").primaryKey(),                          // nanoid
+  name: text("name").notNull(),                         // human label, e.g. "VargasJR prod"
+  keyHash: text("keyHash").notNull().unique(),          // SHA-256 of the raw key — never store plaintext
+  scopes: jsonb("scopes").$type<string[]>().notNull().default([]), // e.g. ["product:write","order:read"]
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  revokedAt: timestamp("revokedAt"),                    // null = active
 });
 
 export const orderItem = pgTable("order_item", {
