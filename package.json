@@ -11,7 +11,7 @@
     "lint": "next lint",
     "format": "prettier --write \"**/*.tsx\"",
     "db:push": "drizzle-kit push --force",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate": "bun run scripts/migrate.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
