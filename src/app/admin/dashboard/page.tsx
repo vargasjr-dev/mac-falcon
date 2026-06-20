@@ -92,6 +92,12 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
           <p className="text-slate-500 text-sm">Orders + assembly queue</p>
         </div>
         <div className="flex items-center gap-3">
+          <Link
+            href="/admin/api-keys"
+            className="text-xs text-slate-500 hover:text-slate-300 transition-colors border border-slate-800 rounded-lg px-3 py-2"
+          >
+            API keys
+          </Link>
           <Suspense>
             <OrderFilter current={filter} />
           </Suspense>
