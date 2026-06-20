@@ -51,6 +51,12 @@ export default async function AdminLayout({
             >
               Supplies
             </Link>
+            <Link
+              href="/admin/api-keys"
+              className="hover:text-slate-200 transition-colors tracking-wide"
+            >
+              API Keys
+            </Link>
             <form action={logout}>
               <button
                 type="submit"
