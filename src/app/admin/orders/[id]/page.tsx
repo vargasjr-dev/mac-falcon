@@ -56,11 +56,9 @@ export default async function OrderDetailPage({ params }: Props) {
 
   // Match BOM parts to supply purchases (case-insensitive partial match)
   function findUnitCost(partName: string): { cost: number; actual: boolean } {
-    // Exact match first
     if (latestUnitCost[partName] !== undefined) {
       return { cost: latestUnitCost[partName], actual: true };
     }
-    // Partial match
     const lower = partName.toLowerCase();
     for (const [key, cost] of Object.entries(latestUnitCost)) {
       if (key.toLowerCase().includes(lower) || lower.includes(key.toLowerCase())) {
@@ -70,15 +68,22 @@ export default async function OrderDetailPage({ params }: Props) {
     return { cost: 0, actual: false };
   }
 
-  const paidComponents = allBom
+  // Merged rows for the unified build checklist (physical parts only)
+  const checklistRows = allBom
     .filter((b) => b.bom.procure !== "digital")
-    .map((b) => ({
-      part: b.bom.part,
-      qty: b.qty,
-      source: b.bom.source,
-      url: b.bom.url,
-      notes: b.bom.notes,
-    }));
+    .map((b) => {
+      const { cost, actual } = findUnitCost(b.bom.part);
+      return {
+        part: b.bom.part,
+        qty: b.qty,
+        source: b.bom.source,
+        url: b.bom.url,
+        notes: b.bom.notes,
+        unitCost: cost,
+        actual,
+        bomEstimate: b.bom.priceUsd,
+      };
+    });
 
   const includedItems = allBom
     .filter((b) => b.bom.procure === "digital")
@@ -90,22 +95,11 @@ export default async function OrderDetailPage({ params }: Props) {
       notes: b.bom.notes,
     }));
 
-  // COGS summary
-  const cogsRows = allBom
-    .filter((b) => b.bom.procure !== "digital")
-    .map((b) => {
-      const { cost, actual } = findUnitCost(b.bom.part);
-      return {
-        part: b.bom.part,
-        qty: b.qty,
-        unitCost: cost,
-        actual,
-        bomEstimate: b.bom.priceUsd,
-      };
-    });
-  const totalActualCogs = cogsRows.reduce((s, r) => s + (r.actual ? r.unitCost * r.qty : 0), 0);
-  const totalEstimatedCogs = cogsRows.reduce((s, r) => s + (r.actual ? 0 : r.bomEstimate * r.qty), 0);
-  const hasAnyCogs = cogsRows.some((r) => r.actual);
+  const hasActualCogs = checklistRows.some((r) => r.actual);
+  const totalCogs = checklistRows.reduce(
+    (s, r) => s + (r.actual ? r.unitCost * r.qty : r.bomEstimate * r.qty),
+    0,
+  );
 
   return (
     <div className="max-w-3xl">
@@ -179,55 +173,13 @@ export default async function OrderDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* COGS summary — from actual supply purchases */}
-      <section className="border border-slate-800 rounded-2xl p-6 mb-8 bg-slate-900/20">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-black text-slate-100 tracking-tight">Cost of goods</h2>
-          <Link href="/admin/supplies" className="text-xs text-slate-500 hover:text-yellow-400 transition-colors">
-            Log purchase →
-          </Link>
-        </div>
-        <div className="space-y-2 mb-4">
-          {cogsRows.map((row, i) => (
-            <div key={i} className="flex items-center justify-between text-sm">
-              <span className="text-slate-400">×{row.qty} {row.part}</span>
-              {row.actual ? (
-                <span className="text-slate-200 font-semibold tabular-nums">
-                  {formatUsd(row.unitCost * row.qty)}
-                </span>
-              ) : (
-                <span className="text-slate-600 tabular-nums">
-                  ~{formatUsd(row.bomEstimate * row.qty)} <span className="text-slate-700 text-xs">est.</span>
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="border-t border-slate-800 pt-3 flex items-center justify-between">
-          <div>
-            <span className="text-slate-500 text-xs">
-              {hasAnyCogs ? "Actual + estimated" : "All estimated from BOM"}
-            </span>
-          </div>
-          <div className="text-right">
-            {hasAnyCogs && totalActualCogs > 0 && (
-              <div className="text-yellow-400 font-black text-lg">
-                {formatUsd(totalActualCogs + totalEstimatedCogs)}
-              </div>
-            )}
-            <div className="text-xs text-slate-600">
-              Margin: {hasAnyCogs && o.totalUsd > 0
-                ? `${(((o.totalUsd - totalActualCogs - totalEstimatedCogs) / o.totalUsd) * 100).toFixed(0)}%`
-                : "—"}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Assembly checklist — interactive client component */}
+      {/* Unified build checklist — interactive client component */}
       <AssemblyChecklist
-        paidComponents={paidComponents}
+        checklistRows={checklistRows}
         includedItems={includedItems}
+        totalCogs={totalCogs}
+        orderTotal={o.totalUsd}
+        hasActualCogs={hasActualCogs}
       />
 
       {/* Items ordered */}
