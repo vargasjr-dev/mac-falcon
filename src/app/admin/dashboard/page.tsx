@@ -55,20 +55,21 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
     .from(order)
     .orderBy(desc(order.createdAt));
 
-  // Stats always from live orders only
-  const liveOrders = allOrders.filter((o) => !o.isTest);
-  const totalRevenue = liveOrders.reduce((s, o) => s + o.totalUsd, 0);
-  const paid = liveOrders.filter((o) => o.status === "paid").length;
-  const assembling = liveOrders.filter((o) => o.status === "assembling").length;
-  const shipped = liveOrders.filter((o) => o.status === "shipped").length;
-
-  // Filtered list for the table
+  // Filtered list for the table (and stats)
   const visibleOrders =
     filter === "live"
       ? allOrders.filter((o) => !o.isTest)
       : filter === "test"
       ? allOrders.filter((o) => o.isTest)
       : allOrders;
+
+  // Stats reflect the current filter
+  const totalRevenue = visibleOrders.reduce((s, o) => s + o.totalUsd, 0);
+  const paid = visibleOrders.filter((o) => o.status === "paid").length;
+  const assembling = visibleOrders.filter((o) => o.status === "assembling").length;
+  const shipped = visibleOrders.filter((o) => o.status === "shipped").length;
+  const orderCountLabel =
+    filter === "live" ? "Live orders" : filter === "test" ? "Test orders" : "All orders";
 
   // Product names
   const orderProducts: Record<string, string> = {};
@@ -105,10 +106,10 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Stats — always live orders only */}
+      {/* Stats — reflect current filter */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
         {[
-          { label: "Live orders", value: liveOrders.length, color: "text-slate-100" },
+          { label: orderCountLabel, value: visibleOrders.length, color: "text-slate-100" },
           { label: "Revenue", value: formatUsd(totalRevenue), color: "text-yellow-400" },
           { label: "Needs assembly", value: paid + assembling, color: "text-blue-400" },
           { label: "Shipped", value: shipped, color: "text-green-400" },
