@@ -13,7 +13,6 @@ const SPECS_STRIP = [
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#05070d] flex flex-col overflow-hidden">
-
       {/* ── Deep space background ── */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <StarField count={220} />
@@ -70,8 +69,8 @@ export default function HomePage() {
 
         <p className="text-slate-600 text-sm mb-10">
           From{" "}
-          <span className="text-yellow-400 font-black text-base">$749</span>
-          {" "}· Free shipping · Mac Mini not included
+          <span className="text-yellow-400 font-black text-base">$749</span> ·
+          Free shipping · Mac Mini not included
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 items-center">
@@ -117,11 +116,16 @@ export default function HomePage() {
           {/* Specs strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-slate-800/60 border-t border-slate-800/60">
             {SPECS_STRIP.map((s) => (
-              <div key={s.label} className="px-6 py-5 flex flex-col gap-1 bg-slate-950/30">
+              <div
+                key={s.label}
+                className="px-6 py-5 flex flex-col gap-1 bg-slate-950/30"
+              >
                 <span className="text-[10px] text-slate-600 uppercase tracking-[0.2em] font-medium">
                   {s.label}
                 </span>
-                <span className="text-slate-300 font-bold text-sm">{s.value}</span>
+                <span className="text-slate-300 font-bold text-sm">
+                  {s.value}
+                </span>
               </div>
             ))}
           </div>
@@ -138,7 +142,10 @@ export default function HomePage() {
 
       {/* ── Footer ── */}
       <footer className="relative z-10 py-6 text-center text-slate-700 text-xs tracking-widest">
-        © {new Date().getFullYear()} MAC FALCON · BUILT FOR THE BOLD
+        <p>© {new Date().getFullYear()} MAC FALCON · BUILT FOR THE BOLD</p>
+        <p className="mt-1">
+          © {new Date().getFullYear()} VargasJR LLC. All rights reserved.
+        </p>
       </footer>
     </main>
   );
