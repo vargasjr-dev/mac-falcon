@@ -12,7 +12,8 @@
     "format": "prettier --write \"**/*.tsx\"",
     "db:push": "drizzle-kit push --force",
     "db:migrate": "bun run scripts/migrate.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "falcon": "bun run bin/falcon.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.0",
