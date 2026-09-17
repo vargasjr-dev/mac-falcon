@@ -52,6 +52,12 @@ export default async function AdminLayout({
               Supplies
             </Link>
             <Link
+              href="/admin/design/m4d2-v1"
+              className="hover:text-slate-200 transition-colors tracking-wide"
+            >
+              Design
+            </Link>
+            <Link
               href="/admin/api-keys"
               className="hover:text-slate-200 transition-colors tracking-wide"
             >
